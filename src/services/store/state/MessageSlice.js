@@ -11,12 +11,8 @@ export const MessageSlice = createSlice({
   name: 'messages',
   initialState,
   reducers: {
-    changeCurrentMessage(state, action) {
-      state.currentMessage = action.payload;
-    },
     addMessage(state, action) {
-      state.messages.push(new createMessage(state.currentMessage , createDate(), 'Me', action.payload));
-      state.currentMessage = '';
+      state.messages.unshift(new createMessage(action.payload.text , action.payload.name, action.payload.date, action.payload.id));
     }
   }
 });

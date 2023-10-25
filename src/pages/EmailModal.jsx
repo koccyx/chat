@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import CodeModal from './CodeModal';
 import { api } from '../services/api/api';
-import { useDispatch } from 'react-redux';
-import { UserSlice } from '../services/store/state/UserSlice';
 import { useToggle } from '../hooks/useToggle';
 
-export default function inputEmailModal() {
+export default function inputEmailModal(props) {
   const [modal, setToggle] = useToggle(false);
   const [inputEmail, setInput] = useState('');
 
-  const [sendinputEmail, status] = api.usePostMailMutation(inputEmail);
-  
-  const dispatch = useDispatch();
-  const {setEmail} = UserSlice.actions; 
+  const [sendinputEmail] = api.usePostMailMutation(inputEmail);
 
   const changeInput = (e) => {
     setInput(e.target.value);
@@ -21,10 +16,6 @@ export default function inputEmailModal() {
   const sendMail = async () => {
     setToggle();
     await sendinputEmail(inputEmail);
-    if (!status.error) {
-      dispatch(setEmail(inputEmail));
-    }
-    console.log(status.error);
   };
 
   return (
@@ -51,7 +42,7 @@ export default function inputEmailModal() {
               />
               <button className="btn" onClick={sendMail}>Получить код</button>
               <div>
-                <CodeModal togglePriveousModal={setToggle}/>
+                <CodeModal togglePriveousModal={setToggle} setCode={props.setCode} refetch={props.refetch} logIn={props.logIn}/>
               </div>
             </div>
           </div>

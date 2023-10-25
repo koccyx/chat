@@ -60,8 +60,9 @@
 }
 
 .received {
-  background-color: #e0e0e0;
+  background-color: #65bfff;
   align-self: flex-start;
+  color: #fff;
 }
 
 .sent {
@@ -140,6 +141,10 @@
   border-radius: 10px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+}
+.popup-small {
+  width: 400px;
+  height: 100px;
 }
 .close_field {
   display: flex;

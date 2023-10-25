@@ -1,39 +1,21 @@
 import React, { useState } from 'react';
 import { useToggle } from '../hooks/useToggle.js';
-import { api } from '../services/api/api.js';
-import { useLocalStorage } from '../hooks/useLocalStorage.js';
-import { UserSlice } from '../services/store/state/UserSlice.js';
-import { useDispatch } from 'react-redux';
-
+import Cookies from 'js-cookie';
 
 export default function CodeModal(props) {
   const [modal, setToggle] = useToggle(false);
   const [codeInput, setInput] = useState('');
-  const dispatch = useDispatch();
 
-  const { setLogin } = UserSlice.actions;
-
-  const [code, setCode] = useLocalStorage(null, 'code');
-
-  const {data, refetch} = api.useGetLoginQuery(code);
-
-  const authMe = async () => {
-    setCode(codeInput);
-    await refetch(code);
-    if (data) {
-      dispatch(setLogin({...data, code}));
-    }
-
-    console.log(data);
+  const authMe = () => {
+    props.setCode(codeInput);
+    Cookies.set('code', codeInput);
+    props.refetch(codeInput);
+    props.logIn();
   };
-
+  
   const changeInput = (e) => {
     setInput(e.target.value);
   };
-
-  // const authMe = () => {
-    
-  // };
 
   return (
   <>

@@ -1,18 +1,42 @@
-import React from 'react';
-import { useDispatch ,useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { MessageSlice } from '../services/store/state/MessageSlice';
+import { UserSlice } from '../services/store/state/UserSlice';
+import { useAuth } from '../hooks/useAuth';
+import ErrorModal from '../pages/ErrorModal';
+import { createDate } from '../utils/helpers';
+import Socket from '../services/api/socket';
 
 function MessageInput() {
-  const {currentMessage} = useSelector(state => state.messageReducer);
-  const {changeCurrentMessage, addMessage} = MessageSlice.actions;
+  const {isError} = useSelector(state => state.userReducer);
+  const {addMessage} = MessageSlice.actions;
+  const {toggleError} = UserSlice.actions;
   const dispatch = useDispatch();
+  const [input, changeInput] = useState('Yo');
+  const {isAuth, name, code} = useAuth();
   
   const addMessages = (e) => {
     e.preventDefault();
-    dispatch(addMessage(Math.floor(Math.random() * 100000)));
+    if (isAuth) {
+      if (input === '') return;
+      // let id = Math.floor(Math.random() * 100000);
+      // let date =  createDate();
+      // dispatch(addMessage({text:input, name, id, date}));
+      Socket.send(input);
+    } else {
+      dispatch(toggleError());
+    }
+    changeInput('');
+  };
+
+
+  const changeMessage = (e) => {
+    changeInput(e.target.value); 
   };
 
   return(
+    <>
+    {isError && <ErrorModal message={'Login to send messages'}/>}
     <footer className="footer">
       <div className="footer__body">
         <form action="submit" className="footer__form" onSubmit={addMessages}>
@@ -22,8 +46,8 @@ function MessageInput() {
               name="message"
               placeholder="Сообщение"
               className="input"
-              value={currentMessage}
-              onChange={(e) => dispatch(changeCurrentMessage(e.target.value))}
+              value={input}
+              onChange={changeMessage}
             />
             <button type="submit" className="input-button">
               <img
@@ -36,6 +60,7 @@ function MessageInput() {
         </form>
       </div>
     </footer>
+    </>
   );
 }
 

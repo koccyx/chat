@@ -1,4 +1,5 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import Cookies from 'js-cookie';
 
 const headers = (token) => ({
   'Authorization': `Bearer ${token}`,
@@ -24,6 +25,26 @@ export const api = createApi({
         url: '/user/me',
         headers: headers(token),
       })
+    }),
+
+    changeName: build.mutation({
+      query: (payload) => {
+        console.log(payload.code);
+        let name = payload.name;
+        return({
+          url: '/user',
+          method: 'PATCH',
+          body: {name},
+          headers: headers(payload.code)
+        });
+      }
+    }),
+
+    getHistory: build.query({
+      query:(code) => ({
+        url: '/messages',
+        headers: headers(code)
+      }) 
     })
   }), 
 });
